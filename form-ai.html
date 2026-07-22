@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulario multi-step de gimnasio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            color-scheme: dark;
+        }
+
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .step-card {
+            transition: all 0.3s ease;
+        }
+
+        .input-error {
+            border-color: #fb923c !important;
+            box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.2);
+        }
+
+        .error-text {
+            color: #fdba74;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-[#050505] text-slate-100">
+    <main class="mx-auto flex min-h-screen max-w-7xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+        <section
+            class="rounded-[2rem] border border-white/10 bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4 shadow-2xl shadow-orange-500/10 sm:p-8 lg:p-10">
+            <div class="mb-6 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                <div class="max-w-2xl">
+                    <p
+                        class="mb-3 inline-flex items-center rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-sm font-medium text-orange-300">
+                        <span class="mr-2 h-2.5 w-2.5 rounded-full bg-orange-500"></span>
+                        Inscripción premium para tu próxima etapa
+                    </p>
+                    <h1 class="text-3xl font-black tracking-tight text-white sm:text-4xl">
+                        Descubre tu membresía ideal en <span class="text-orange-500">Fuel Gym</span>
+                    </h1>
+                    <p class="mt-3 text-sm leading-6 text-slate-300 sm:text-base">
+                        Completa este formulario de varios pasos para reservar tu plan, elegir tus preferencias y
+                        conocer las mejores opciones de pago.
+                    </p>
+                </div>
+
+                <div class="rounded-2xl border border-orange-500/20 bg-black/40 p-4 backdrop-blur sm:min-w-[260px]">
+                    <p class="text-sm text-slate-400">Progreso</p>
+                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
+                        <div id="progressBar"
+                            class="h-full w-1/4 rounded-full bg-gradient-to-r from-orange-500 to-amber-400 transition-all duration-300">
+                        </div>
+                    </div>
+                    <p id="progressText" class="mt-3 text-sm font-medium text-orange-300">Paso 1 de 4</p>
+                </div>
+            </div>
+
+            <div class="mb-8 grid grid-cols-4 gap-2 sm:gap-3" aria-label="Indicador de pasos del formulario">
+                <div class="step-indicator rounded-xl border border-orange-500/20 bg-orange-500/10 p-2 text-center text-[11px] font-semibold text-orange-200"
+                    data-step="1">1. Datos</div>
+                <div class="step-indicator rounded-xl border border-white/10 bg-white/5 p-2 text-center text-[11px] font-semibold text-slate-400"
+                    data-step="2">2. Membresía</div>
+                <div class="step-indicator rounded-xl border border-white/10 bg-white/5 p-2 text-center text-[11px] font-semibold text-slate-400"
+                    data-step="3">3. Pago</div>
+                <div class="step-indicator rounded-xl border border-white/10 bg-white/5 p-2 text-center text-[11px] font-semibold text-slate-400"
+                    data-step="4">4. Confirmación</div>
+            </div>
+
+            <form id="gymForm" novalidate class="space-y-6" aria-label="Formulario de inscripción al gimnasio">
+                <div id="statusMessage"
+                    class="rounded-2xl border border-orange-500/20 bg-orange-500/10 p-4 text-sm text-orange-100"
+                    role="status" aria-live="polite"></div>
+
+                <section class="step-card rounded-[1.5rem] border border-white/10 bg-black/20 p-4 sm:p-6" data-step="1">
+                    <fieldset class="space-y-5">
+                        <legend class="mb-3 text-xl font-semibold text-white">Paso 1 · Datos personales</legend>
+
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <div>
+                                <label for="fullName" class="mb-2 block text-sm font-medium text-slate-200">Nombre
+                                    completo <span class="text-orange-400">*</span></label>
+                                <input id="fullName" name="fullName" type="text" required minlength="3" maxlength="60"
+                                    class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-500/40"
+                                    aria-required="true" aria-describedby="fullNameError" />
+                                <p id="fullNameError" class="error-text mt-2 hidden text-sm" aria-live="polite"></p>
+                            </div>
+
+                            <div>
+                                <label for="email" class="mb-2 block text-sm font-medium text-slate-200">Correo
+                                    electrónico <span class="text-orange-400">*</span></label>
+                                <input id="email" name="email" type="email" required
+                                    class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-500/40"
+                                    aria-required="true" aria-describedby="emailError" />
+                                <p id="emailError" class="error-text mt-2 hidden text-sm" aria-live="polite"></p>
+                            </div>
+
+                            <div>
+                                <label for="phone" class="mb-2 block text-sm font-medium text-slate-200">Teléfono <span
+                                        class="text-orange-400">*</span></label>
+                                <input id="phone" name="phone" type="tel" required pattern="^[0-9]{7,15}$"
+                                    class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-500/40"
+                                    aria-required="true" aria-describedby="phoneError" />
+                                <p id="phoneError" class="error-text mt-2 hidden text-sm" aria-live="polite"></p>
+                            </div>
+
+                            <div>
+                                <label for="birthDate" class="mb-2 block text-sm font-medium text-slate-200">Fecha de
+                                    nacimiento <span class="text-orange-400">*</span></label>
+                                <input id="birthDate" name="birthDate" type="date" required
+                                    class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-500/40"
+                                    aria-required="true" aria-describedby="birthDateError" />
+                                <p id="birthDateError" class="error-text mt-2 hidden text-sm" aria-live="polite"></p>
+                            </div>
+
+                            <div>
+                                <label for="country" class="mb-2 block text-sm font-medium text-slate-200">País <span
+                                        class="text-orange-400">*</span></label>
+                                <select id="country" name="country" required
+                                    class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-500/40"
+                                    aria-required="true" aria-describedby="countryError">
+                                    <option value="" class="text-slate-600">Selecciona un país</option>
+                                </select>
+                                <p id="countryError" class="error-text mt-2 hidden text-sm" aria-live="polite"></p>
+                            </div>
+
+                            <div>
+                                <label for="state" class="mb-2 block text-sm font-medium text-slate-200">Estado <span
+                                        class="text-orange-400">*</span></label>
+                                <select id="state" name="state" required disabled
+                                    class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-500/40"
+                                    aria-required="true" aria-describedby="stateError">
+                                    <option value="" class="text-slate-600">Selecciona un estado</option>
+                                </select>
+                                <p id="stateError" class="error-text mt-2 hidden text-sm" aria-live="polite"></p>
+                            </div>
+
+                            <div>
+                                <label for="city" class="mb-2 block text-sm font-medium text-slate-200">Ciudad <span
+                                        class="text-orange-400">*</span></label>
+                                <select id="city" name="city" required disabled
+                                    class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-500/40"
+                                    aria-required="true" aria-describedby="cityError">
+                                    <option value="" class="text-slate-600">Selecciona una ciudad</option>
+                                </select>
+                                <p id="cityError" class="error-text mt-2 hidden text-sm" aria-live="polite"></p>
+                            </div>
+
+                            <div>
+                                <label for="age" class="mb-2 block text-sm font-medium text-slate-200">Edad <span
+                                        class="text-orange-400">*</span></label>
+                                <input id="age" name="age" type="number" required min="16" max="80"
+                                    class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-500/40"
+                                    aria-required="true" aria-describedby="ageError" />
+                                <p id="ageError" class="error-text mt-2 hidden text-sm" aria-live="polite"></p>
+                            </div>
+                        </div>
+                    </fieldset>
+                </section>
+
+                <section class="step-card hidden rounded-[1.5rem] border border-white/10 bg-black/20 p-4 sm:p-6"
+                    data-step="2">
+                    <fieldset class="space-y-5">
+                        <legend class="mb-3 text-xl font-semibold text-white">Paso 2 · Preferencias de membresía
+                        </legend>
+
+                        <div>
+                            <label class="mb-2 block text-sm font-medium text-slate-200">Tipo de membresía deseada <span
+                                    class="text-orange-400">*</span></label>
+                            <div class="grid gap-3 sm:grid-cols-3">
+                                <label class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                    <input type="radio" name="membership" value="basica" required
+                                        class="mr-2 accent-orange-500" />
+                                    <span class="text-sm text-slate-200">Básica</span>
+                                </label>
+                                <label class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                    <input type="radio" name="membership" value="premium" required
+                                        class="mr-2 accent-orange-500" />
+                                    <span class="text-sm text-slate-200">Premium</span>
+                                </label>
+                                <label class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                    <input type="radio" name="membership" value="crossfit" required
+                                        class="mr-2 accent-orange-500" />
+                                    <span class="text-sm text-slate-200">CrossFit</span>
+                                </label>
+                            </div>
+                            <p id="membershipError" class="error-text mt-2 hidden text-sm" aria-live="polite"></p>
+                        </div>
+
+                        <div>
+                            <label for="goals" class="mb-2 block text-sm font-medium text-slate-200">Objetivos de
+                                entrenamiento</label>
+                            <div class="grid gap-2 sm:grid-cols-2">
+                                <label class="rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-slate-200">
+                                    <input type="checkbox" name="goals" value="perder-peso"
+                                        class="mr-2 accent-orange-500" />
+                                    Perder peso
+                                </label>
+                                <label class="rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-slate-200">
+                                    <input type="checkbox" name="goals" value="ganar-musculo"
+                                        class="mr-2 accent-orange-500" />
+                                    Ganar músculo
+                                </label>
+                                <label class="rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-slate-200">
+                                    <input type="checkbox" name="goals" value="resistencia"
+                                        class="mr-2 accent-orange-500" />
+                                    Resistencia
+                                </label>
+                                <label class="rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-slate-200">
+                                    <input type="checkbox" name="goals" value="bienestar"
+                                        class="mr-2 accent-orange-500" />
+                                    Bienestar general
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="notes" class="mb-2 block text-sm font-medium text-slate-200">Comentarios
+                                adicionales</label>
+                            <textarea id="notes" name="notes" rows="4" maxlength="220"
+                                class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-500/40"
+                                aria-describedby="notesHelp"></textarea>
+                            <p id="notesHelp" class="mt-2 text-sm text-slate-400">Comparte cualquier detalle que ayude a
+                                personalizar tu plan.</p>
+                        </div>
+
+                        <div>
+                            <label for="avatar" class="mb-2 block text-sm font-medium text-slate-200">Foto de perfil o
+                                documento</label>
+                            <input id="avatar" name="avatar" type="file" accept="image/*,.pdf"
+                                class="w-full rounded-xl border border-dashed border-orange-500/30 bg-white/5 px-4 py-3 text-sm text-slate-200"
+                                aria-describedby="avatarHelp" />
+                            <p id="avatarHelp" class="mt-2 text-sm text-slate-400">Archivos permitidos: imágenes o PDF.
+                            </p>
+                        </div>
+
+                        <div>
+                            <label for="password" class="mb-2 block text-sm font-medium text-slate-200">Contraseña <span
+                                    class="text-orange-400">*</span></label>
+                            <div class="flex gap-2">
+                                <input id="password" name="password" type="password" required minlength="8"
+                                    class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-500/40"
+                                    aria-required="true" aria-describedby="passwordError" />
+                                <button id="togglePassword" type="button"
+                                    class="rounded-xl border border-orange-500/30 bg-orange-500/10 px-4 py-2 text-sm font-medium text-orange-300 transition hover:bg-orange-500/20">Mostrar</button>
+                            </div>
+                            <p id="passwordError" class="error-text mt-2 hidden text-sm" aria-live="polite"></p>
+                        </div>
+                    </fieldset>
+                </section>
+
+                <section class="step-card hidden rounded-[1.5rem] border border-white/10 bg-black/20 p-4 sm:p-6"
+                    data-step="3">
+                    <fieldset class="space-y-5">
+                        <legend class="mb-3 text-xl font-semibold text-white">Paso 3 · Pago</legend>
+
+                        <div>
+                            <label class="mb-2 block text-sm font-medium text-slate-200">Método de pago <span
+                                    class="text-orange-400">*</span></label>
+                            <div class="grid gap-3 sm:grid-cols-3">
+                                <label class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                    <input type="radio" name="paymentMethod" value="mensual" required
+                                        class="mr-2 accent-orange-500" />
+                                    <span class="text-sm text-slate-200">Mensual</span>
+                                </label>
+                                <label class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                    <input type="radio" name="paymentMethod" value="anual" required
+                                        class="mr-2 accent-orange-500" />
+                                    <span class="text-sm text-slate-200">Anual</span>
+                                </label>
+                                <label class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                    <input type="radio" name="paymentMethod" value="presencial" required
+                                        class="mr-2 accent-orange-500" />
+                                    <span class="text-sm text-slate-200">Presencial</span>
+                                </label>
+                            </div>
+                            <p id="paymentMethodError" class="error-text mt-2 hidden text-sm" aria-live="polite"></p>
+                        </div>
+
+                        <div id="paymentInfo"
+                            class="rounded-2xl border border-orange-500/20 bg-orange-500/10 p-4 text-sm text-orange-100">
+                        </div>
+                    </fieldset>
+                </section>
+
+                <section class="step-card hidden rounded-[1.5rem] border border-white/10 bg-black/20 p-4 sm:p-6"
+                    data-step="4">
+                    <fieldset class="space-y-5">
+                        <legend class="mb-3 text-xl font-semibold text-white">Paso 4 · Confirmación</legend>
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                            <h2 class="text-lg font-semibold text-white">Resumen de tu inscripción</h2>
+                            <ul id="summaryList" class="mt-4 space-y-2 text-sm text-slate-300"></ul>
+                        </div>
+                        <div id="summaryErrors"
+                            class="rounded-2xl border border-orange-500/20 bg-orange-500/10 p-4 text-sm text-orange-100"
+                            aria-live="polite"></div>
+                    </fieldset>
+                </section>
+
+                <div class="flex flex-col gap-3 sm:flex-row sm:justify-between">
+                    <button id="prevBtn" type="button"
+                        class="hidden rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10">Anterior</button>
+                    <div class="flex gap-3 sm:ml-auto">
+                        <button id="nextBtn" type="button"
+                            class="rounded-xl bg-gradient-to-r from-orange-500 to-amber-400 px-5 py-3 text-sm font-semibold text-black transition hover:brightness-110">Siguiente</button>
+                        <button id="submitBtn" type="submit"
+                            class="hidden rounded-xl bg-gradient-to-r from-orange-500 to-amber-400 px-5 py-3 text-sm font-semibold text-black transition hover:brightness-110">Enviar
+                            solicitud</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById('gymForm');
+        const steps = Array.from(document.querySelectorAll('.step-card'));
+        const indicators = Array.from(document.querySelectorAll('.step-indicator'));
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const paymentInfo = document.getElementById('paymentInfo');
+        const summaryList = document.getElementById('summaryList');
+        const summaryErrors = document.getElementById('summaryErrors');
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const countrySelect = document.getElementById('country');
+        const stateSelect = document.getElementById('state');
+        const citySelect = document.getElementById('city');
+        let currentStep = 1;
+
+        const locations = {
+            Colombia: {
+                Antioquia: ['Medellín', 'Envigado', 'Itagüí'],
+                Cundinamarca: ['Bogotá', 'Soacha', 'Zipaquirá'],
+                Valle: ['Cali', 'Palmira', 'Buenaventura']
+            },
+            México: {
+                CDMX: ['Ciudad de México', 'Tlalpan', 'Coyoacán'],
+                Jalisco: ['Guadalajara', 'Zapopan', 'Tlaquepaque'],
+                NuevoLeón: ['Monterrey', 'San Nicolás', 'Guadalupe']
+            },
+            España: {
+                Madrid: ['Madrid', 'Alcalá de Henares', 'Getafe'],
+                Barcelona: ['Barcelona', 'Badalona', 'L’Hospitalet'],
+                Valencia: ['Valencia', 'Torrent', 'Gandía']
+            }
+        };
+
+        const paymentDetails = {
+            mensual: {
+                title: 'Plan mensual',
+                price: '$49.000/mes',
+                benefits: ['Acceso ilimitado', 'Clases guiadas', 'Vestidor premium']
+            },
+            anual: {
+                title: 'Plan anual',
+                price: '$499.000/año',
+                benefits: ['Descuento del 20%', 'Invitación a eventos', '1 evaluación física gratis']
+            },
+            presencial: {
+                title: 'Asistencia presencial',
+                price: '$25.000 por visita',
+                benefits: ['Atención personalizada', 'Prueba inicial', 'Reserva de turnos']
+            }
+        };
+
+        function updateStepUI() {
+            steps.forEach((step, index) => {
+                const stepNumber = index + 1;
+                step.classList.toggle('hidden', stepNumber !== currentStep);
+            });
+
+            indicators.forEach((indicator) => {
+                const isActive = Number(indicator.dataset.step) === currentStep;
+                indicator.classList.toggle('border-orange-500/20', isActive);
+                indicator.classList.toggle('bg-orange-500/10', isActive);
+                indicator.classList.toggle('text-orange-200', isActive);
+                indicator.classList.toggle('border-white/10', !isActive);
+                indicator.classList.toggle('bg-white/5', !isActive);
+                indicator.classList.toggle('text-slate-400', !isActive);
+            });
+
+            const percentage = (currentStep / steps.length) * 100;
+            progressBar.style.width = `${percentage}%`;
+            progressText.textContent = `Paso ${currentStep} de ${steps.length}`;
+            prevBtn.classList.toggle('hidden', currentStep === 1);
+            nextBtn.classList.toggle('hidden', currentStep === steps.length);
+            submitBtn.classList.toggle('hidden', currentStep !== steps.length);
+
+            if (currentStep === 4) {
+                buildSummary();
+            }
+        }
+
+        function showStatus(message, isError = false) {
+            statusMessage.textContent = message;
+            statusMessage.className = isError
+                ? 'rounded-2xl border border-orange-500/30 bg-orange-500/10 p-4 text-sm text-orange-100'
+                : 'rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-100';
+        }
+
+        function setFieldError(field, message) {
+            const errorEl = document.getElementById(`${field.name}Error`);
+            if (!errorEl) return;
+            field.classList.add('input-error');
+            field.setAttribute('aria-invalid', 'true');
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+        }
+
+        function clearFieldError(field) {
+            const errorEl = document.getElementById(`${field.name}Error`);
+            if (!errorEl) return;
+            field.classList.remove('input-error');
+            field.setAttribute('aria-invalid', 'false');
+            errorEl.textContent = '';
+            errorEl.classList.add('hidden');
+        }
+
+        function showGroupError(name, message) {
+            const errorEl = document.getElementById(`${name}Error`);
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function clearGroupError(name) {
+            const errorEl = document.getElementById(`${name}Error`);
+            if (errorEl) {
+                errorEl.textContent = '';
+                errorEl.classList.add('hidden');
+            }
+        }
+
+        function validateField(field) {
+            const isCheckboxOrRadio = field.type === 'checkbox' || field.type === 'radio';
+            const value = isCheckboxOrRadio ? field.checked : field.value.trim();
+            const name = field.name;
+
+            if (field.hasAttribute('required') && (isCheckboxOrRadio ? !field.checked : value === '')) {
+                setFieldError(field, 'Este campo es obligatorio.');
+                return false;
+            }
+
+            if (name === 'fullName' && value.length < 3) {
+                setFieldError(field, 'Ingresa un nombre válido.');
+                return false;
+            }
+
+            if (name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                setFieldError(field, 'Ingresa un correo electrónico válido.');
+                return false;
+            }
+
+            if (name === 'phone' && !/^[0-9]{7,15}$/.test(value)) {
+                setFieldError(field, 'El teléfono debe contener solo números.');
+                return false;
+            }
+
+            if (name === 'age' && (Number(value) < 16 || Number(value) > 80)) {
+                setFieldError(field, 'La edad debe estar entre 16 y 80 años.');
+                return false;
+            }
+
+            if (name === 'password' && value.length < 8) {
+                setFieldError(field, 'La contraseña debe tener al menos 8 caracteres.');
+                return false;
+            }
+
+            clearFieldError(field);
+            return true;
+        }
+
+        function validateStep(stepNumber) {
+            const stepFields = steps[stepNumber - 1].querySelectorAll('input, select, textarea');
+            let isValid = true;
+
+            stepFields.forEach((field) => {
+                if (field.type === 'radio' || field.type === 'checkbox') {
+                    const group = form.querySelectorAll(`input[name="${field.name}"]`);
+                    const hasSelection = Array.from(group).some((item) => item.checked);
+
+                    if (field.required && !hasSelection) {
+                        showGroupError(field.name, 'Selecciona una opción.');
+                        isValid = false;
+                        return;
+                    }
+
+                    clearGroupError(field.name);
+                    return;
+                }
+
+                if (!validateField(field)) {
+                    isValid = false;
+                }
+            });
+
+            return isValid;
+        }
+
+        function getFirstInvalidStep() {
+            for (let index = 0; index < steps.length; index += 1) {
+                if (!validateStep(index + 1)) {
+                    return index + 1;
+                }
+            }
+            return null;
+        }
+
+        function populateCountries() {
+            Object.keys(locations).forEach((country) => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                countrySelect.appendChild(option);
+            });
+        }
+
+        function updateLocationOptions() {
+            const country = countrySelect.value;
+            stateSelect.innerHTML = '<option value="">Selecciona un estado</option>';
+            citySelect.innerHTML = '<option value="">Selecciona una ciudad</option>';
+            stateSelect.disabled = true;
+            citySelect.disabled = true;
+
+            if (!country) return;
+
+            const states = Object.keys(locations[country]);
+            states.forEach((state) => {
+                const option = document.createElement('option');
+                option.value = state;
+                option.textContent = state;
+                stateSelect.appendChild(option);
+            });
+
+            stateSelect.disabled = false;
+        }
+
+        function updateCityOptions() {
+            const country = countrySelect.value;
+            const state = stateSelect.value;
+            citySelect.innerHTML = '<option value="">Selecciona una ciudad</option>';
+            citySelect.disabled = true;
+
+            if (!country || !state) return;
+
+            locations[country][state].forEach((city) => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+
+            citySelect.disabled = false;
+        }
+
+        function updatePaymentInfo() {
+            const selected = form.querySelector('input[name="paymentMethod"]:checked');
+            if (!selected) {
+                paymentInfo.innerHTML = '<p>Selecciona un método de pago para ver los detalles.</p>';
+                return;
+            }
+
+            const details = paymentDetails[selected.value];
+            paymentInfo.innerHTML = `
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-lg font-semibold text-white">${details.title}</p>
+                        <p class="mt-1 text-slate-300">Precio: ${details.price}</p>
+                    </div>
+                    <div class="rounded-xl border border-white/10 bg-black/20 px-3 py-2">
+                        <p class="text-sm font-semibold text-orange-300">Beneficios</p>
+                        <ul class="mt-2 space-y-1 text-sm text-slate-200">
+                            ${details.benefits.map((item) => `<li>• ${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        function buildSummary() {
+            const formData = new FormData(form);
+            const goals = Array.from(form.querySelectorAll('input[name="goals"]:checked'))
+                .map((item) => item.value)
+                .join(', ');
+            const entries = [
+                ['Nombre', formData.get('fullName')],
+                ['Correo', formData.get('email')],
+                ['Teléfono', formData.get('phone')],
+                ['País', formData.get('country')],
+                ['Estado', formData.get('state')],
+                ['Ciudad', formData.get('city')],
+                ['Membresía', formData.get('membership')],
+                ['Objetivos', goals || '—'],
+                ['Pago', formData.get('paymentMethod')],
+                ['Contraseña', '••••••••']
+            ];
+
+            summaryList.innerHTML = entries
+                .map(([label, value]) => `<li class="rounded-xl border border-white/10 bg-black/20 px-3 py-2"><span class="font-semibold text-orange-300">${label}:</span> ${value || '—'}</li>`)
+                .join('');
+
+            summaryErrors.textContent = 'Revisa tus datos antes de confirmar.';
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (!validateStep(currentStep)) {
+                showStatus('Revisa los campos marcados antes de continuar.', true);
+                return;
+            }
+
+            currentStep += 1;
+            if (currentStep > steps.length) currentStep = steps.length;
+            updateStepUI();
+            showStatus('Paso completado. Continúa con el siguiente bloque del formulario.');
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentStep -= 1;
+            if (currentStep < 1) currentStep = 1;
+            updateStepUI();
+        });
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const invalidStep = getFirstInvalidStep();
+
+            if (invalidStep) {
+                currentStep = invalidStep;
+                updateStepUI();
+                showStatus('Tu solicitud no puede enviarse porque aún hay campos incompletos o inválidos.', true);
+                return;
+            }
+
+            buildSummary();
+            showStatus('Solicitud enviada correctamente. Un asesor se pondrá en contacto contigo pronto.');
+        });
+
+        document.querySelectorAll('input, select, textarea').forEach((field) => {
+            field.addEventListener('input', () => {
+                if (field.type === 'radio' || field.type === 'checkbox') {
+                    return;
+                }
+
+                if (field.name === 'password') {
+                    validateField(field);
+                    return;
+                }
+
+                validateField(field);
+            });
+
+            field.addEventListener('change', () => {
+                if (field.name === 'paymentMethod') {
+                    updatePaymentInfo();
+                }
+                if (field.name === 'country') {
+                    updateLocationOptions();
+                    validateField(field);
+                }
+                if (field.name === 'state') {
+                    updateCityOptions();
+                    validateField(field);
+                }
+                if (field.type === 'radio' || field.type === 'checkbox') {
+                    validateStep(currentStep);
+                    return;
+                }
+                if (field.name === 'password') {
+                    validateField(field);
+                    return;
+                }
+                validateField(field);
+            });
+        });
+
+        togglePassword.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            togglePassword.textContent = isPassword ? 'Ocultar' : 'Mostrar';
+            togglePassword.setAttribute('aria-pressed', String(isPassword));
+        });
+
+        countrySelect.addEventListener('change', updateLocationOptions);
+        stateSelect.addEventListener('change', updateCityOptions);
+        form.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
+            radio.addEventListener('change', updatePaymentInfo);
+        });
+
+        populateCountries();
+        updateStepUI();
+        showStatus('Completa los datos paso a paso para avanzar.');
+        updatePaymentInfo();
+        summaryErrors.textContent = 'Revisa tus datos antes de confirmar.';
+    </script>
+</body>
+
+</html>
